@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="cs" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dominik Žáček | Portfolio</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+
+  <style>
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: linear-gradient(-45deg, #3b82f6, #6366f1, #ec4899, #22c55e);
+      background-size: 400% 400%;
+      animation: gradientBG 18s ease infinite;
+      opacity: 0.15;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .cursor {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #3b82f6;
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+    }
+
+    .cursor-trail {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: #3b82f6;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.6;
+    }
+
+    .tilt {
+      transform-style: preserve-3d;
+      transition: transform 0.2s;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      max-width: 500px;
+    }
+
+
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #0f172a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      color: white;
+    }
+
+    .loader-text {
+      font-size: 32px;
+      font-weight: bold;
+      animation: spinText 2s linear infinite;
+    }
+
+    @keyframes spinText {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .progress-bar {
+      width: 200px;
+      height: 6px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 999px;
+      margin-top: 20px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #3b82f6, #6366f1);
+      animation: loadProgress 5s linear forwards;
+    }
+
+    @keyframes loadProgress {
+      from { width: 0%; }
+      to { width: 100%; }
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+  </style>
+</head>
+
+<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100">
+
+
+<div id="loader">
+  <div class="loader-text">Dominik Žáček</div>
+  <div class="progress-bar">
+    <div class="progress-fill"></div>
+  </div>
+</div>
+
+<div class="cursor" id="cursor"></div>
+<div id="particles-js" class="fixed inset-0 -z-10"></div>
+
+
+<header class="fixed w-full bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl z-50">
+  <div class="max-w-6xl mx-auto flex justify-between p-4">
+    <h1 class="font-bold">Dominik Žáček</h1>
+    <button onclick="toggleDark()">🌙</button>
+  </div>
+</header>
+
+
+<section class="min-h-screen flex flex-col justify-center items-center text-center">
+  <h2 class="text-5xl font-bold" data-aos="fade-up">Ahoj👋jsem 𝓓𝓻𝓸𝓧𝓧𝓸𝓶</h2>
+  <p class="mt-4 opacity-70" data-aos="fade-up">Weby • Programování • Technologie</p>
+</section>
+
+
+<section id="projects" class="max-w-6xl mx-auto py-24 px-6">
+  <h3 class="text-3xl mb-10">Projekty</h3>
+  <div id="projectsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+</section>
+
+ <section id="contact" class="max-w-xl mx-auto py-24 px-6">
+  <h3 class="text-2xl mb-6 text-center">📩 Kontaktuj mě</h3>
+
+  <form onsubmit="sendEmail(event)" class="space-y-4">
+    <input id="name" type="text" placeholder="Tvé jméno" class="w-full p-3 rounded-xl text-black" required />
+    <input id="email" type="email" placeholder="Tvůj email" class="w-full p-3 rounded-xl text-black" required />
+    <textarea id="message" placeholder="Tvoje zpráva..." class="w-full p-3 rounded-xl text-black h-32" required></textarea>
+
+    <button id="submitBtn" type="submit" class="w-full px-6 py-3 bg-blue-500 text-white rounded-xl hover:scale-105 transition">
+      Odeslat
+    </button>
+  </form>
+
+  <p id="formStatus" class="mt-6 text-center opacity-80"></p>
+</section>
+
+
+<div id="modal" class="modal" onclick="closeModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h3 id="modalTitle" class="text-xl font-bold"></h3>
+    <p id="modalDesc" class="mt-2"></p>
+  </div>
+</div>
+
+<script>
+
+setTimeout(() => {
+  const loader = document.getElementById('loader')
+  loader.style.opacity = '0'
+  loader.style.transition = 'opacity 1s ease'
+  setTimeout(() => loader.remove(), 1000)
+}, 5000)
+
+  function toggleDark() {
+  const html = document.documentElement
+  html.classList.toggle('dark')
+  localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light')
+}
+
+if (localStorage.getItem('theme') === 'dark') {
+  document.documentElement.classList.add('dark')
+}
+
+const cursor = document.getElementById('cursor')
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px'
+  cursor.style.top = e.clientY + 'px'
+})
+
+
+fetch('https://api.github.com/users/droxxom/repos')
+.then(res => res.json())
+.then(data => {
+  if (!Array.isArray(data)) return
+
+  const grid = document.getElementById('projectsGrid')
+
+  data.slice(0,6).forEach(repo => {
+    const div = document.createElement('div')
+    div.className = 'tilt p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg cursor-pointer'
+
+    div.innerHTML = `<h4 class="font-bold">${repo.name}</h4><p class="text-sm opacity-70">Klikni pro detail</p>`
+
+    div.onclick = () => openModal(repo)
+    grid.appendChild(div)
+  })
+})
+
+function openModal(repo) {
+  document.getElementById('modal').style.display = 'flex'
+  document.getElementById('modalTitle').innerText = repo.name
+  document.getElementById('modalDesc').innerText = repo.description || 'Bez popisu'
+}
+
+function closeModal() {
+  document.getElementById('modal').style.display = 'none'
+}
+
+
+function sendEmail(e) {
+  e.preventDefault()
+
+  const name = document.getElementById('name').value.trim()
+  const email = document.getElementById('email').value.trim()
+  const message = document.getElementById('message').value.trim()
+  const status = document.getElementById('formStatus')
+  const button = document.getElementById('submitBtn')
+
+  if (!name || !email || !message) {
+    status.innerText = '❌ Vyplň všechna pole'
+    return
+  }
+
+  button.disabled = true
+  button.innerText = 'Odesílám...'
+
+  setTimeout(() => {
+    const subject = encodeURIComponent('Zpráva od ' + name)
+    const body = encodeURIComponent(`Jméno: ${name}\nEmail: ${email}\n\nZpráva:\n${message}`)
+
+    window.location.href = `mailto:domca2860@seznam.cz?subject=${subject}&body=${body}`
+
+    status.innerText = '✅ Email otevřen'
+    button.innerText = 'Odesláno'
+  }, 800)
+}
+
+
+AOS.init()
+tsParticles.load("particles-js", { particles: { number: { value: 40 }, move: { speed: 1 } } })
+</script>
+
+</body>
+</html>
