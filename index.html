@@ -32,6 +32,18 @@
       100% { background-position: 0% 50%; }
     }
 
+    .logo {
+      width: 120px;
+      margin-bottom: 20px;
+      transition: 0.3s;
+      filter: drop-shadow(0 0 10px #3b82f6);
+    }
+
+    .logo:hover {
+      transform: scale(1.1) rotate(5deg);
+      filter: drop-shadow(0 0 20px #6366f1);
+    }
+
     .cursor {
       width: 20px;
       height: 20px;
@@ -51,7 +63,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 10000;
+      z-index: 99999;
       color: white;
     }
 
@@ -126,16 +138,27 @@
   </div>
 </header>
 
+
 <section class="min-h-screen flex flex-col justify-center items-center text-center">
-  <h2 class="text-5xl font-bold" data-aos="fade-up">Ahoj 👋 jsem DroXXom</h2>
-  <p class="mt-4 opacity-70" data-aos="fade-up">Weby • Programování • Technologie</p>
+
+  <img src="logo.png" alt="logo" class="logo" data-aos="zoom-in">
+
+  <h2 class="text-5xl font-bold" data-aos="fade-up">
+    Ahoj 👋 jsem DroXXom
+  </h2>
+
+  <p class="mt-4 opacity-70" data-aos="fade-up">
+    Weby • Programování • Technologie
+  </p>
 </section>
+
 
 <section id="projects" class="max-w-6xl mx-auto py-24 px-6">
   <h3 class="text-3xl mb-10">Projekty</h3>
   <div id="projectsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
 </section>
 
+  
 <section id="contact" class="max-w-xl mx-auto py-24 px-6">
   <h3 class="text-2xl mb-6 text-center">📩 Kontaktuj mě</h3>
 
@@ -152,22 +175,22 @@
   <p id="formStatus" class="mt-6 text-center opacity-80"></p>
 </section>
 
-<div id="modal" class="modal" onclick="closeModal()">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <h3 id="modalTitle" class="text-xl font-bold"></h3>
-    <p id="modalDesc"></p>
-  </div>
-</div>
-
 <script>
-setTimeout(() => {
-  const loader = document.getElementById('loader')
-  loader.style.opacity = '0'
-  loader.style.transition = '1s'
-  setTimeout(() => loader.remove(), 1000)
-}, 5000)
 
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const loader = document.getElementById('loader')
+    loader.style.opacity = '0'
+    loader.style.transition = 'opacity 1s ease'
 
+    setTimeout(() => {
+      loader.style.display = 'none'
+    }, 1000)
+
+  }, 5000)
+})
+
+  
 function toggleDark() {
   const html = document.documentElement
   html.classList.toggle('dark')
@@ -177,7 +200,7 @@ if (localStorage.getItem('theme') === 'dark') {
   document.documentElement.classList.add('dark')
 }
 
-
+  
 const cursor = document.getElementById('cursor')
 document.addEventListener('mousemove', e => {
   cursor.style.left = e.clientX + 'px'
@@ -193,21 +216,26 @@ fetch('https://api.github.com/users/droxxom/repos')
   const grid = document.getElementById('projectsGrid')
 
   data.slice(0,6).forEach(repo => {
+    const img = `https://opengraph.githubassets.com/1/${repo.full_name}`
+    const fallback = 'https://picsum.photos/400/200'
+
     const div = document.createElement('div')
     div.className = 'group rounded-2xl overflow-hidden bg-white dark:bg-gray-800 shadow-lg cursor-pointer hover:-translate-y-2 transition'
 
-    const img = `https://opengraph.githubassets.com/1/${repo.full_name}`
-
     div.innerHTML = `
       <div class="relative overflow-hidden">
-        <img src="${img}" class="w-full h-40 object-cover group-hover:scale-110 transition duration-500" />
+        <img src="${img}" onerror="this.src='${fallback}'"
+        class="w-full h-40 object-cover group-hover:scale-110 transition duration-500" />
+        
         <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
           <span class="text-white">Zobrazit detail</span>
         </div>
       </div>
+
       <div class="p-5">
         <h4 class="font-bold text-lg">${repo.name}</h4>
         <p class="text-sm opacity-70 mt-2">${repo.description || 'Bez popisu'}</p>
+
         <div class="flex justify-between mt-4 text-xs opacity-60">
           <span>⭐ ${repo.stargazers_count}</span>
           <span>${repo.language || ''}</span>
@@ -215,22 +243,11 @@ fetch('https://api.github.com/users/droxxom/repos')
       </div>
     `
 
-    div.onclick = () => openModal(repo)
     grid.appendChild(div)
   })
 })
 
 
-function openModal(repo) {
-  document.getElementById('modal').style.display = 'flex'
-  document.getElementById('modalTitle').innerText = repo.name
-  document.getElementById('modalDesc').innerText = repo.description || 'Bez popisu'
-}
-function closeModal() {
-  document.getElementById('modal').style.display = 'none'
-}
-
-  
 function sendEmail(e) {
   e.preventDefault()
 
@@ -256,7 +273,7 @@ function sendEmail(e) {
 }
 
 AOS.init()
-tsParticles.load("particles-js", { particles: { number: { value: 40 }, move: { speed: 1 } } })
+tsParticles.load(\"particles-js\", { particles: { number: { value: 40 }, move: { speed: 1 } } })
 </script>
 
 </body>
